@@ -18,7 +18,7 @@ class aide::config (
 
   concat::fragment { 'aide.conf.header':
     target  => 'aide.conf',
-    order   => 01,
+    order   => '01',
     content => template( $config_template ),
   }
 
