@@ -14,6 +14,8 @@ class aide (
   $config_template = $aide::params::config_template,
   $nocheck         = $aide::params::nocheck,
   Optional[String[1]] $mailto = undef,
+  Hash $rules      = {},
+  Hash $watches    = {},
 ) inherits aide::params {
 
   package { $package:
@@ -49,4 +51,15 @@ class aide (
       require      => Package[$package],
     }
 
+  $rules.each | String $rule, Hash $attrs | {
+    aide::rule { $rule:
+      * => $attrs,
+    }
+  }
+
+  $watches.each | String $watch, Hash $attrs | {
+    aide::watch { $watch:
+      * => $attrs,
+    }
+  }
 }

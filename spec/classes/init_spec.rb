@@ -53,5 +53,37 @@ describe 'aide', type: 'class' do
         }
       end
     end
+
+    describe '`rules` parameter' do
+      let(:params) do
+        {
+          rules: {
+            'Test rule' => {
+              'name'  => 'MyRule',
+              'rules' => ['p','md5']
+            }
+          }
+        }
+      end
+
+      it { is_expected.to contain_aide__rule('Test rule').with_name('MyRule') }
+      it { is_expected.to contain_aide__rule('Test rule').with_rules(['p','md5']) }
+    end
+
+    describe '`watches` parameter' do
+      let(:params) do
+        {
+          watches: {
+            'Exclude /var/log' => {
+              'path' => '/var/log',
+              'type' => 'exclude'
+            }
+          }
+        }
+      end
+
+      it { is_expected.to contain_aide__watch('Exclude /var/log').with_path('/var/log') }
+      it { is_expected.to contain_aide__watch('Exclude /var/log').with_type('exclude') }
+    end
   end
 end
