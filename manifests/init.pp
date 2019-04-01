@@ -24,17 +24,7 @@ class aide (
     ensure => $version,
   }
 
-  -> class  { '::aide::cron':
-      aide_path => $aide_path,
-      conf_path => $conf_path,
-      minute    => $minute,
-      hour      => $hour,
-      nocheck   => $nocheck,
-      mailto    => $mailto,
-      require   => Package[$package],
-    }
-
-  -> class  { '::aide::config':
+  class  { 'aide::config':
       conf_path       => $conf_path,
       db_path         => $db_path,
       db_temp_path    => $db_temp_path,
@@ -43,15 +33,24 @@ class aide (
       syslogout       => $syslogout,
       config_template => $config_template,
       require         => Package[$package],
-    }
+  }
 
-  ~> class  { '::aide::firstrun':
+  class  { 'aide::firstrun':
       aide_path    => $aide_path,
       conf_path    => $conf_path,
       db_temp_path => $db_temp_path,
       db_path      => $db_path,
-      require      => Package[$package],
-    }
+      subscribe    => Class['aide::config'],
+  }
+
+  class  { 'aide::cron':
+    aide_path => $aide_path,
+    conf_path => $conf_path,
+    minute    => $minute,
+    hour      => $hour,
+    nocheck   => $nocheck,
+    mailto    => $mailto,
+  }
 
   if $use_default_rules {
     $default_rules.each | String $rule_name, Array $rules | {
