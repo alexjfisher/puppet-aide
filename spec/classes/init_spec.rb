@@ -20,12 +20,12 @@ describe 'aide', type: 'class' do
     }
 
     describe 'should allow package to be absent' do
-      let(:params) {{ :version => 'absent', :package => ['aide'], }}
+      let(:params) {{ :version => 'absent', :package => 'aide', }}
       it { should contain_package('aide').with_ensure('absent') }
     end
 
     describe 'should allow package name to be overridden' do
-      let(:params) {{ :version => 'latest', :package => ['notaide'], }}
+      let(:params) {{ :version => 'latest', :package => 'notaide', }}
       it { should contain_package('notaide').with_ensure('latest') }
     end
 
