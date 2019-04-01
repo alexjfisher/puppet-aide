@@ -16,6 +16,8 @@ class aide (
   Optional[String[1]] $mailto = undef,
   Hash $rules      = {},
   Hash $watches    = {},
+  Hash $default_rules = $aide::params::default_rules,
+  Boolean $use_default_rules = false,
 ) inherits aide::params {
 
   package { $package:
@@ -50,6 +52,15 @@ class aide (
       db_path      => $db_path,
       require      => Package[$package],
     }
+
+  if $use_default_rules {
+    $default_rules.each | String $rule_name, Array $rules | {
+      aide::rule { $rule_name:
+        rules => $rules,
+        order => '03',
+      }
+    }
+  }
 
   $rules.each | String $rule, Hash $attrs | {
     aide::rule { $rule:

@@ -85,5 +85,27 @@ describe 'aide', type: 'class' do
       it { is_expected.to contain_aide__watch('Exclude /var/log').with_path('/var/log') }
       it { is_expected.to contain_aide__watch('Exclude /var/log').with_type('exclude') }
     end
+
+    describe '`use_default_rules` parameter' do
+      let(:params) { { use_default_rules: true } }
+
+      it { is_expected.to have_aide__rule_resource_count(11) }
+
+      context 'when `rules` are also specified' do
+        let(:params) do
+          {
+            rules: {
+              'Test rule' => {
+                'name'  => 'MyRule',
+                'rules' => ['p','md5']
+              }
+            },
+            use_default_rules: true
+          }
+        end
+
+        it { is_expected.to have_aide__rule_resource_count(12) }
+      end
+    end
   end
 end

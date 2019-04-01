@@ -14,6 +14,19 @@ class aide::params {
   $cron_template   = 'aide/cron.erb'
   $nocheck         = false
 
+  $default_rules = {
+    'FIPSR'         => ['p','i','n','u','g','s','m','c','acl','selinux','xattrs','sha256'],
+    'ALLXTRAHASHES' => ['sha1','rmd160','sha256','sha512','tiger'],
+    'EVERYTHING'    => ['R','ALLXTRAHASHES'],
+    'NORMAL'        => ['sha256'],
+    'DIR'           => ['p','i','n','u','g','acl','selinux','xattrs'],
+    'PERMS'         => ['p','u','g','acl','selinux','xattrs'],
+    'STATIC'        => ['p','u','g','acl','selinux','xattrs','i','n','b','c','ftype'],
+    'LOG'           => ['p','u','g','n','acl','selinux','ftype'],
+    'CONTENT'       => ['sha256','ftype'],
+    'CONTENT_EX'    => ['sha256','ftype','p','u','g','n','acl','selinux','xattrs'],
+    'DATAONLY'      => ['p','n','u','g','s','acl','selinux','xattrs','sha256'],
+  }
   case $::osfamily {
     'Debian': {
       $aide_path = '/usr/bin/aide'
