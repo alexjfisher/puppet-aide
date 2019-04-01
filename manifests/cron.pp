@@ -1,33 +1,30 @@
 # Class for managing aide's cron job.
 class aide::cron (
   $aide_path,
+  $conf_path,
   $minute,
   $hour,
   $nocheck,
   $mailto,
 ) {
 
-  if $nocheck == true {
+  if $nocheck {
     $cron_ensure = 'absent'
   } else {
     $cron_ensure = 'present'
   }
 
-  if $mailto != undef {
-    cron { 'aide':
-      ensure  => $cron_ensure,
-      command => "${aide_path} --check | /bin/mail -s \"\$(hostname) - AIDE Integrity Check\" ${mailto}",
-      user    => 'root',
-      hour    => $hour,
-      minute  => $minute,
-    }
+  if $mailto {
+    $command = "${aide_path} --config ${conf_path} --check | /usr/bin/mailx -s '${facts['fqdn']} - AIDE Integrity Check' ${mailto}"
   } else {
-    cron { 'aide':
-      ensure  => $cron_ensure,
-      command => "${aide_path} --check",
-      user    => 'root',
-      hour    => $hour,
-      minute  => $minute,
-    }
+    $command = "${aide_path} --config ${conf_path} --check"
+  }
+
+  cron { 'aide':
+    ensure  => $cron_ensure,
+    command => $command,
+    user    => 'root',
+    hour    => $hour,
+    minute  => $minute,
   }
 }

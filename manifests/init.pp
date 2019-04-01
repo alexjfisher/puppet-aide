@@ -13,7 +13,7 @@ class aide (
   $syslogout       = $aide::params::syslogout,
   $config_template = $aide::params::config_template,
   $nocheck         = $aide::params::nocheck,
-  $mailto          = $aide::params::mailto,
+  Optional[String[1]] $mailto = undef,
 ) inherits aide::params {
 
   package { $package:
@@ -22,9 +22,11 @@ class aide (
 
   -> class  { '::aide::cron':
       aide_path => $aide_path,
+      conf_path => $conf_path,
       minute    => $minute,
       hour      => $hour,
       nocheck   => $nocheck,
+      mailto    => $mailto,
       require   => Package[$package],
     }
 

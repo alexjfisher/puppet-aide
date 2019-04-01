@@ -29,8 +29,29 @@ describe 'aide', type: 'class' do
       it { should contain_package('notaide').with_ensure('latest') }
     end
 
+    describe 'cron' do
+      it { is_expected.to contain_class('aide::cron') }
+      it {
+        is_expected.to contain_cron('aide').with(
+          'ensure'  => 'present',
+          'command' => '/usr/sbin/aide --config /etc/aide.conf --check',
+          'user'    => 'root',
+          'hour'    => 0,
+          'minute'  => 0
+        )
+      }
+      context 'with nocheck == true' do
+        let(:params) { { nocheck: true } }
+        it { is_expected.to contain_cron('aide').with_ensure('absent') }
+      end
+      context 'with mailto set' do
+        let(:params) { { mailto: 'root@example.com' } }
+        let(:node) { 'host.example.com' }
+        it {
+          is_expected.to contain_cron('aide').with_command(
+            '/usr/sbin/aide --config /etc/aide.conf --check | /usr/bin/mailx -s \'host.example.com - AIDE Integrity Check\' root@example.com')
+        }
+      end
+    end
   end
-
 end
-
-
